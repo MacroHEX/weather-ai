@@ -1,19 +1,25 @@
+// ::: next
+//
+export const revalidate = 86400;
+
 // ::: libraries
 //
 import { getClient } from "@/apollo-client";
 
 // ::: utils
 //
+import cleanData from "@/lib/cleanData";
+import getBasePath from "@/lib/getBasePath";
 import fetchWeatherQuery from "@/graphql/queries/fetchWeatherQueries";
 
 // ::: components
 //
 import StatCard from "@/components/StatCard";
 import CalloutCard from "@/components/CalloutCard";
+import TempChart from "@/components/TempChart";
+import RainChart from "@/components/RainChart";
+import HumidityChart from "@/components/HumidityChart";
 import InformationPanel from "@/components/InformationPanel";
-import TempChart from "../../../../../components/TempChart";
-import RainChart from "../../../../../components/RainChart";
-import HumidityChart from "../../../../../components/HumidityChart";
 
 // ::: types
 //
@@ -40,6 +46,24 @@ const WeatherPage = async ({ params: { city, lat, long } }: Props) => {
 
   const results: Root = data.myQuery;
 
+  const dataToSend = cleanData(results, city);
+
+  // console.log("Data Clened", JSON.stringify(dataToSend));
+
+  // GPT Limit Rates
+  const rest = await fetch(`${getBasePath()}/api/getWeatherSummary`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      weatherData: dataToSend,
+    }),
+  });
+
+  const GPTdata = await rest.json();
+  const { content } = GPTdata;
+
   return (
     <div className="flex flex-col min-h-screen md:flex-row">
       <InformationPanel city={city} lat={lat} long={long} results={results} />
@@ -56,7 +80,7 @@ const WeatherPage = async ({ params: { city, lat, long } }: Props) => {
           </div>
 
           <div className="m-2 mb-10">
-            <CalloutCard message="This is where GPT-4 Summary will go" />
+            <CalloutCard message={content} />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-5 m-2">

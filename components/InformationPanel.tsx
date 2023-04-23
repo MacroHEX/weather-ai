@@ -113,6 +113,9 @@ const InformationPanel = ({ city, lat, long, results }: Props) => {
             </p>
           </div>
         </div>
+
+        <hr className="mt-10 mb-5" />
+        <p className="text-gray-400">The summary is updated every 24 hours</p>
       </div>
     </div>
   );

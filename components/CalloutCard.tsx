@@ -1,3 +1,4 @@
+"use client"
 // ::: libraries
 //
 import { CheckCircleIcon, ExclamationIcon } from "@heroicons/react/solid";
@@ -10,7 +11,7 @@ type Props = {
   warning?: boolean;
 };
 
-export const CalloutCard = ({ message, warning }: Props) => {
+const CalloutCard = ({ message, warning }: Props) => {
   return (
     <Callout
       className="mt-4"
